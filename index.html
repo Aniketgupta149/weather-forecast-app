@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+</head>
+
+<body>
+  <!-- Professional Navbar with animated gradient -->
+  <nav class="navbar navbar-expand-lg animated-navbar" style="width:100vw;position:fixed;top:0;left:0;z-index:100;box-shadow:0 2px 12px #2222;">
+    <div class="container-fluid px-4" style="padding-top: 0.4em; padding-bottom: 0.4em;">
+      <a class="navbar-brand fw-bold d-flex align-items-center" href="#home" style="color:#fff;font-size:1.3em;gap:0.7em;">
+        <img src="logo.png" alt="Logo" width="32" height="32" style="margin-right:12px;vertical-align:middle;border-radius:8px;box-shadow:0 2px 8px #2222;">
+        Weather App
+      </a>
+      <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" style="border:none;">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav ms-auto d-flex align-items-center nav-responsive-gap">
+          <li class="nav-item">
+            <a class="nav-link text-center" href="#home" style="color:#fff; padding-left:0.7em; padding-right:0.7em;">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-center" href="#forecast" style="color:#fff; padding-left:0.7em; padding-right:0.7em;">Forecast</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-center" href="#map" style="color:#fff; padding-left:0.7em; padding-right:0.7em;">Map</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-center" href="#about" style="color:#fff; padding-left:0.7em; padding-right:0.7em;">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-center" href="#contact" style="color:#fff; padding-left:0.7em; padding-right:0.7em;">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div style="height:64px"></div> <!-- Spacer for navbar -->
+
+  <!-- Home Section -->
+  <section id="home" style="padding: 2.5em 0 1em 0;">
+    <div class="container-fluid d-flex justify-content-center align-items-center" style="max-width:1200px; min-height: 60vh;">
+      <div class="row justify-content-center align-items-center w-100">
+        <div class="col-12" style="max-width:100%;margin:auto;">
+          <div class="card mx-auto" style="margin: 0 auto; max-width:100%;">
+            <div class="search">
+              <input type="text" class="search-bar" placeholder="Search" aria-label="Search for city">
+              <button>
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024" height="1.5em"
+                  width="1.5em" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0 0 11.6 0l43.6-43.5a8.2 8.2 0 0 0 0-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z">
+                  </path>
+                </svg>
+              </button>
+            </div>
+            <div class="weather loading">
+              <h2 class="city">Weather in Denver</h2>
+              <div class="city-time" style="font-size:1.1em;color:#555;margin-bottom:0.5em;"></div>
+              <h1 class="temp">51°C</h1>
+              <div class="flex">
+                <img src="https://openweathermap.org/img/wn/04n.png" alt="Weather icon" class="icon" />
+                <div class="description">Cloudy</div>
+              </div>
+              <div class="humidity">Humidity: 60%</div>
+              <div class="wind">Wind speed: 6.2 km/h</div>
+            </div>
+            <div class="error-message"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Forecast Section -->
+  <section id="forecast" style="padding:2.5em 0 1em 0;">
+    <div class="container-fluid" style="max-width:1200px;">
+      <div class="card" style="text-align:center;">
+        <h2 style="color:var(--theme-accent);font-weight:700;">Forecast</h2>
+        <p style="color:#444;">5-day weather forecast for your selected city.</p>
+        <div id="forecast-cards" class="forecast-cards-responsive" style="display:flex;justify-content:space-between;gap:1em;flex-wrap:wrap;">
+          <!-- Forecast cards will be injected here by script.js -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Map Section -->
+  <section id="map" style="padding:2.5em 0 1em 0;">
+    <div class="container-fluid" style="max-width:1200px;">
+      <div class="card" style="text-align:center;">
+        <h2 style="color:var(--theme-accent);font-weight:700;">Weather Map</h2>
+        <p style="color:#000000;">Click anywhere on the map to get weather info for that location.</p>
+        <div id="map-container" style="width:100%;height:350px;border-radius:16px;overflow:hidden;border:1px solid #ccc;margin-bottom:1em;min-width:200px;"></div>
+        <div id="map-weather-result" style="margin-top:1em;"></div>
+        <div style="font-size:0.95em;color:#000000;margin-top:0.5em;">Map: <a href="https://leafletjs.com/" target="_blank" style="color:var(--theme-accent);">Leaflet</a> + <a href="https://openstreetmap.org/" target="_blank" style="color:var(--theme-accent);">OpenStreetMap</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" style="padding:2.5em 0 1em 0;">
+    <div class="container-fluid" style="max-width:1200px;">
+      <div class="card" style="text-align:center;">
+        <h2 style="color:var(--theme-accent);font-weight:700;">About</h2>
+        <p style="color:#000000;">
+          <b>Weather App</b> is a modern, responsive web application that provides real-time weather information for any city worldwide. It uses the OpenWeatherMap API to fetch current weather data and displays it in a clean, user-friendly interface.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2em;margin:2em 0;">
+          <div style="min-width:220px;max-width:340px;text-align:left;">
+            <h4 style="color:var(--theme-accent);font-size:1.13em;font-weight:700;margin-bottom:0.7em;">Key Features</h4>
+            <ul style="padding-left:1.2em;list-style:square;color:#444;font-size:1.07em;line-height:1.7;">
+              <li>Live weather: temperature, humidity, wind, and sky condition</li>
+              <li>Automatic local time for the selected city</li>
+              <li>5-day detailed forecast with icons</li>
+              <li>Interactive map: click to view weather anywhere</li>
+              <li>Fully responsive, modern UI for all devices</li>
+            </ul>
+          </div>
+          <div style="min-width:180px;max-width:260px;text-align:left;">
+            <h4 style="color:var(--theme-accent);font-size:1.13em;font-weight:700;margin-bottom:0.7em;">Tech Stack</h4>
+            <ul style="padding-left:1.2em;list-style:square;color:#444;font-size:1.07em;line-height:1.7;">
+              <li>HTML5, CSS3, JavaScript (ES6+)</li>
+              <li>Bootstrap 5</li>
+              <li>OpenWeatherMap API</li>
+              <li>Leaflet &amp; OpenStreetMap</li>
+            </ul>
+          </div>
+        </div>
+        <div style="color:#000000;font-size:1em;margin-top:1.2em;">
+          Designed &amp; Developed by <span style="color:var(--theme-accent);font-weight:600;">Aniket Gupta</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" style="padding:2.5em 0 1em 0;">
+    <div class="container-fluid" style="max-width:1200px;">
+      <div class="card" style="text-align:center;">
+        <h2 style="color:var(--theme-accent);font-weight:700;">Contact</h2>
+        <p style="color:#000000;">
+          Have questions, suggestions, or feedback? Reach out!
+        </p>
+        <div style="margin:1em 0;">
+          <a href="mailto:aniketgupta149@gmail.com" class="btn btn-warning" style="background:var(--theme-accent);color:#fff;border:none;">
+            Email: aniketgupta149@gmail.com
+          </a>
+        </div>
+        <div style="font-size:0.97em;color:#000000;">
+          Or connect on <a href="https://github.com/Aniketgupta149" target="_blank" style="color:var(--theme-accent);">GitHub</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <div class="footer footer-wide" style="padding: 0.6em 0 0.5em 0;">
+    <div class="footer-content">
+      <div style="font-size:0.97em; color:#eee; margin-top:0.2em;">
+        &copy; 2024 Aniket Gupta &nbsp;|&nbsp;
+        <a href="https://github.com/Aniketgupta149" target="_blank" style="color:var(--theme-accent);text-decoration:underline;">GitHub</a>
+        &nbsp;|&nbsp;
+        <a href="mailto:aniketgupta149@gmail.com" style="color:var(--theme-accent);text-decoration:underline;">Contact</a>
+      </div>
+      <div style="font-size:0.93em; color:#000000; margin-top:0.1em;">
+        Powered by <a href="https://openweathermap.org/" target="_blank" style="color:var(--theme-accent);text-decoration:underline;">OpenWeatherMap API</a>
+      </div>
+    </div>
+  </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="./script.js" defer></script>
+</body>
+
+</html>

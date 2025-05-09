@@ -1,0 +1,828 @@
+:root {
+  --theme-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --theme-card: rgba(255,255,255,0.18);
+  --theme-accent: #ffb347;
+  --theme-text: #222;
+  --theme-glass: rgba(255,255,255,0.35);
+  --theme-glass-border: rgba(255,255,255,0.25);
+}
+
+/* --- Animated Weather Backgrounds --- */
+
+/* Clear: Sunny sky with glowing rays */
+body.weather-clear {
+  background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+  overflow: hidden;
+}
+body.weather-clear::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 70% 30%, #fffbe6cc 0%, #ffe08244 40%, transparent 70%);
+  animation: sunnyRays 6s linear infinite;
+}
+body.weather-clear::after {
+  content: "";
+  position: fixed;
+  left: 50%; top: 20%;
+  width: 220px; height: 220px;
+  transform: translate(-50%, 0);
+  background: radial-gradient(circle, #ffe082 60%, #fffbe6cc 100%);
+  border-radius: 50%;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.7;
+  animation: sunPulse 3s infinite alternate;
+  filter: blur(2px);
+  box-shadow: 0 0 120px 60px #ffe08299, 0 0 300px 120px #fffbe655;
+}
+.sun-rays {
+  position: fixed;
+  left: 50%; top: 18%;
+  width: 320px; height: 320px;
+  transform: translate(-50%, 0);
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.18;
+  background: repeating-conic-gradient(from 0deg, #ffe082 0deg 8deg, transparent 8deg 20deg);
+  border-radius: 50%;
+  animation: raysRotate 18s linear infinite;
+  filter: blur(12px);
+}
+@keyframes sunnyRays {
+  0%, 100% { filter: blur(0px) brightness(1); }
+  50% { filter: blur(2px) brightness(1.08); }
+}
+@keyframes sunPulse {
+  0% { opacity: 0.7; filter: blur(2px);}
+  100% { opacity: 1; filter: blur(6px);}
+}
+@keyframes raysRotate {
+  0% { transform: translate(-50%, 0) rotate(0deg);}
+  100% { transform: translate(-50%, 0) rotate(360deg);}
+}
+
+/* Clouds: Drifting clouds using SVG overlay */
+body.weather-clouds {
+  background: linear-gradient(120deg, #bdc3c7 0%, #2c3e50 100%);
+  background-size: 200% 200%;
+  animation: cloudsMove 30s linear infinite;
+  overflow: hidden;
+}
+body.weather-clouds::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: url('data:image/svg+xml;utf8,<svg width="100%" height="100%" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg"><ellipse fill="white" fill-opacity="0.25" cx="200" cy="120" rx="120" ry="50"/><ellipse fill="white" fill-opacity="0.18" cx="600" cy="200" rx="160" ry="60"/><ellipse fill="white" fill-opacity="0.13" cx="400" cy="400" rx="180" ry="70"/></svg>');
+  background-size: cover;
+  animation: cloudsDrift 60s linear infinite;
+}
+body.weather-clouds::after {
+  content: "";
+  position: fixed;
+  left: 0; top: 0; width: 100vw; height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+  background: url('data:image/svg+xml;utf8,<svg width="800" height="200" xmlns="http://www.w3.org/2000/svg"><ellipse fill="white" fill-opacity="0.18" cx="150" cy="80" rx="120" ry="50"/><ellipse fill="white" fill-opacity="0.13" cx="400" cy="120" rx="180" ry="70"/><ellipse fill="white" fill-opacity="0.10" cx="650" cy="60" rx="100" ry="40"/></svg>');
+  background-repeat: repeat-x;
+  background-size: 800px 200px;
+  animation: cloudsFloat 60s linear infinite;
+  opacity: 0.7;
+}
+.clouds-layer {
+  position: fixed;
+  width: 100vw; height: 200px;
+  left: 0; top: 10vh;
+  z-index: 2;
+  pointer-events: none;
+  background: url('data:image/svg+xml;utf8,<svg width="800" height="200" xmlns="http://www.w3.org/2000/svg"><ellipse fill="white" fill-opacity="0.12" cx="200" cy="100" rx="120" ry="50"/><ellipse fill="white" fill-opacity="0.09" cx="600" cy="120" rx="180" ry="70"/></svg>');
+  background-repeat: repeat-x;
+  background-size: 800px 200px;
+  animation: cloudsLayerMove 60s linear infinite;
+  opacity: 0.35;
+}
+.clouds-layer.front {
+  top: 18vh;
+  opacity: 0.5;
+  animation-duration: 40s;
+  filter: blur(1.5px);
+}
+.clouds-layer.back {
+  top: 5vh;
+  opacity: 0.22;
+  animation-duration: 90s;
+  filter: blur(3px);
+}
+@keyframes cloudsDrift {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 0%; }
+}
+@keyframes cloudsFloat {
+  0% { background-position-x: 0; }
+  100% { background-position-x: 800px; }
+}
+@keyframes cloudsLayerMove {
+  0% { background-position-x: 0; }
+  100% { background-position-x: 1600px; }
+}
+
+/* Rain: Falling drops and soft lightning */
+body.weather-rain {
+  background: linear-gradient(120deg, #485563 0%, #29323c 100%);
+  overflow: hidden;
+}
+body.weather-rain::before {
+  /* Remove background animation for rain, keep only raindrop overlays */
+  content: none;
+}
+body.weather-rain::after {
+  /* Flickering lightning removed for rain */
+  content: none;
+}
+body.weather-rain .rain-anim {
+  pointer-events: none;
+  position: fixed;
+  left: 0; top: 0; width: 100vw; height: 100vh;
+  z-index: 2;
+  overflow: hidden;
+}
+.rain-drop {
+  position: absolute;
+  width: 2px;
+  height: 32px;
+  background: linear-gradient(to bottom, #b3e0ff 0%, #2196f3 100%);
+  opacity: 0.45;
+  border-radius: 1px;
+  animation: rainDropAnim 1.2s linear infinite, rainSway 2.5s ease-in-out infinite;
+}
+.rain-drop.fast {
+  opacity: 0.7;
+  background: linear-gradient(to bottom, #b3e0ff 0%, #1976d2 100%);
+  animation-duration: 0.7s;
+}
+.rain-drop.slow {
+  opacity: 0.3;
+  background: linear-gradient(to bottom, #e3f2fd 0%, #64b5f6 100%);
+  animation-duration: 1.8s;
+}
+.rain-splash {
+  position: absolute;
+  bottom: 0;
+  width: 12px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(173,216,230,0.25);
+  opacity: 0.7;
+  animation: splashAnim 1.2s linear infinite;
+}
+@keyframes rainDrop {
+  0% { background-position-y: 0; }
+  100% { background-position-y: 18px; }
+}
+@keyframes rainLightning {
+  0%, 97%, 100% { opacity: 0; }
+  98% { opacity: 0.7; }
+  99% { opacity: 0.2; }
+}
+@keyframes rainDropAnim {
+  0% { top: -40px; opacity: 0.7; }
+  80% { opacity: 0.7; }
+  100% { top: 100vh; opacity: 0; }
+}
+@keyframes rainSway {
+  0%, 100% { margin-left: 0; }
+  50% { margin-left: 6px; }
+}
+@keyframes splashAnim {
+  0%, 90% { opacity: 0; transform: scaleX(0.2);}
+  95% { opacity: 0.7; transform: scaleX(1);}
+  100% { opacity: 0; transform: scaleX(0.2);}
+}
+
+/* Thunderstorm: Flickering lightning and dramatic contrast */
+body.weather-thunderstorm {
+  background: linear-gradient(120deg, #232526 0%, #414345 100%);
+  animation: thunder 2s infinite;
+  overflow: hidden;
+}
+body.weather-thunderstorm::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(120deg, transparent 80%, #fff8 100%);
+  animation: thunderLightning 3s linear infinite;
+}
+body.weather-thunderstorm::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(120deg, #fff8 0%, transparent 100%);
+  opacity: 0;
+  animation: lightningFlashReal 7s infinite;
+}
+@keyframes thunderLightning {
+  0%, 95%, 100% { opacity: 0; }
+  96% { opacity: 1; }
+  97% { opacity: 0.3; }
+}
+@keyframes lightningFlash {
+  0%, 95%, 100% { opacity: 0; }
+  96% { opacity: 1; }
+  97% { opacity: 0.5; }
+  98% { opacity: 0.9; }
+  99% { opacity: 0.2; }
+}
+@keyframes lightningFlashReal {
+  0%, 94%, 100% { opacity: 0; }
+  95% { opacity: 1; }
+  96% { opacity: 0.2; }
+  97% { opacity: 0.8; }
+  98% { opacity: 0.1; }
+  99% { opacity: 0.5; }
+}
+
+/* Snow: Gentle falling flakes */
+body.weather-snow {
+  background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+  animation: snow 10s linear infinite;
+  overflow: hidden;
+}
+body.weather-snow::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url('data:image/svg+xml;utf8,<svg width="100%" height="100%" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="3" fill="white" fill-opacity="0.7"/><circle cx="400" cy="200" r="2" fill="white" fill-opacity="0.5"/><circle cx="700" cy="300" r="4" fill="white" fill-opacity="0.6"/><circle cx="200" cy="500" r="2.5" fill="white" fill-opacity="0.4"/><circle cx="600" cy="450" r="3.5" fill="white" fill-opacity="0.5"/></svg>');
+  background-size: cover;
+  animation: snowFall 12s linear infinite;
+}
+body.weather-snow .snow-anim {
+  pointer-events: none;
+  position: fixed;
+  left: 0; top: 0; width: 100vw; height: 100vh;
+  z-index: 2;
+  overflow: hidden;
+}
+.snow-flake {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.7;
+  filter: blur(0.5px);
+  animation: snowFlakeAnimReal 10s linear infinite, snowTwinkle 3s ease-in-out infinite;
+}
+.snow-flake.slow {
+  opacity: 0.4;
+  filter: blur(1.5px);
+  animation-duration: 16s, 3s;
+}
+.snow-flake.fast {
+  opacity: 0.8;
+  filter: blur(0.2px);
+  animation-duration: 6s, 2s;
+}
+@keyframes snowFall {
+  0% { background-position-y: 0; }
+  100% { background-position-y: 100px; }
+}
+@keyframes snowFlakeAnim {
+  0% { top: -10px; opacity: 0.7; }
+  80% { opacity: 0.7; }
+  100% { top: 100vh; opacity: 0; }
+}
+@keyframes snowFlakeAnimReal {
+  0% { top: -10px; opacity: 0.7; transform: translateX(0);}
+  20% { transform: translateX(-10px);}
+  40% { transform: translateX(10px);}
+  60% { transform: translateX(-8px);}
+  80% { transform: translateX(8px);}
+  100% { top: 100vh; opacity: 0; transform: translateX(0);}
+}
+@keyframes snowTwinkle {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* --- Remove All Weather Animations --- */
+
+/* Remove weather background and overlay animations */
+body.weather-clear,
+body.weather-clouds,
+body.weather-rain,
+body.weather-thunderstorm,
+body.weather-snow {
+  background: var(--theme-bg) !important;
+  animation: none !important;
+  overflow: auto;
+}
+body.weather-clear::before,
+body.weather-clear::after,
+body.weather-clouds::before,
+body.weather-clouds::after,
+body.weather-rain::before,
+body.weather-rain::after,
+body.weather-thunderstorm::before,
+body.weather-thunderstorm::after,
+body.weather-snow::before,
+body.weather-snow::after,
+.sun-rays,
+.clouds-layer,
+.rain-anim,
+.snow-anim {
+  display: none !important;
+  content: none !important;
+  animation: none !important;
+}
+
+/* --- End Animated Weather Backgrounds --- */
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 120%;
+  background: var(--theme-bg);
+  background-attachment: fixed;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.7s cubic-bezier(.4,2,.6,1);
+}
+
+/* Sunny animation */
+@keyframes sunny {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(1.1); }
+  100% { filter: brightness(1); }
+}
+
+/* Clouds animation */
+@keyframes cloudsMove {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+/* Thunderstorm animation (flicker) */
+@keyframes thunder {
+  0%, 100% { filter: brightness(1); }
+  10%, 20% { filter: brightness(2); }
+  15%, 25% { filter: brightness(0.7); }
+  30%, 90% { filter: brightness(1); }
+}
+
+/* Snow animation (subtle shimmer) */
+@keyframes snow {
+  0% { filter: blur(0px); }
+  50% { filter: blur(1.5px); }
+  100% { filter: blur(0px); }
+}
+
+/* Optional: Add rain drops using pseudo-elements */
+body.weather-rain::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.1) 0px,
+    rgba(255,255,255,0.1) 2px,
+    transparent 2px,
+    transparent 20px
+  );
+  animation: rainDrop 0.5s linear infinite;
+  z-index: 0;
+}
+@keyframes rainDrop {
+  0% { background-position-y: 0; }
+  100% { background-position-y: 20px; }
+}
+
+.fade-bg {
+  animation: bg-fade 0.7s;
+}
+
+@keyframes bg-fade {
+  from { opacity: 0.5; }
+  to { opacity: 1; }
+}
+
+.card {
+  background: var(--theme-glass);
+  color: var(--theme-text);
+  padding: 2.5em 2em 2em 2em;
+  border-radius: 32px;
+  width: 100%;
+  max-width: 420px;
+  margin: 2em auto 1em auto;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.25);
+  backdrop-filter: blur(18px) saturate(120%);
+  border: 1.5px solid var(--theme-glass-border);
+  animation: fade-in 1s;
+  transition: background 0.7s cubic-bezier(.4,2,.6,1), color 0.7s, box-shadow 0.3s;
+}
+.card:hover {
+  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.32);
+  transform: translateY(-2px) scale(1.01);
+}
+
+/* Responsive card width for wide layout */
+.card {
+  max-width: 100%;
+  min-width: 320px;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(30px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+.weather.fade-in {
+  animation: fade-in 1s;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1em;
+}
+
+button {
+  background: var(--theme-accent);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  height: 44px;
+  width: 44px;
+  margin: 0.5em;
+  box-shadow: 0 2px 8px rgba(255,179,71,0.15);
+  transition: background 0.2s, transform 0.2s;
+}
+button:hover {
+  background: #ff9800;
+  transform: scale(1.08);
+}
+button:focus {
+  outline: 2px solid var(--theme-accent);
+  outline-offset: 2px;
+}
+
+input.search-bar {
+  background: rgba(255,255,255,0.18);
+  color: var(--theme-text);
+  border: none;
+  outline: none;
+  padding: 0.4em 1em;
+  border-radius: 24px;
+  font-family: inherit;
+  font-size: 105%;
+  width: calc(100% - 100px);
+  margin-right: 0.5em;
+  transition: background 0.2s;
+}
+input.search-bar:focus {
+  background: rgba(255,255,255,0.35);
+}
+input.search-bar::placeholder {
+  color: #666;
+  opacity: 1;
+  font-style: italic;
+}
+
+h1.temp {
+  color: var(--theme-accent);
+  font-size: 2.7em;
+  font-weight: 700;
+  margin: 0 0 0.4em 0;
+  text-shadow: 0 2px 8px #fff4;
+
+}
+
+.city {
+  font-size: 1.4em;
+  font-weight: 700;
+  margin-bottom: 0.2em;
+  letter-spacing: 1px;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5em;
+}
+
+.icon {
+  width: 60px;
+  height: 60px;
+  filter: drop-shadow(0 2px 8px #0002);
+  transition: transform 0.5s;
+}
+.icon:hover {
+  transform: scale(1.1) rotate(-10deg);
+}
+
+.description {
+  text-transform: capitalize;
+  margin-left: 12px;
+  font-size: 1.1em;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.humidity, .wind {
+  margin-top: 0.3em;
+  font-size: 1.05em;
+  color: #333;
+}
+
+.weather.loading {
+  visibility: hidden;
+  max-height: 20px;
+  position: relative;
+}
+
+.weather.loading:after {
+  visibility: visible;
+  content: "Loading...";
+  color: var(--theme-accent);
+  position: absolute;
+  top: 0;
+  left: 20px;
+  font-size: 1.2em;
+  font-weight: 600;
+  letter-spacing: 1px;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0.5; }
+}
+
+.error-message {
+  color: #ff5252;
+  font-weight: 600;
+  text-align: center;
+  padding: 1em 0;
+  font-size: 1.2em;
+}
+
+.footer {
+  background: var(--theme-glass);
+  color: var(--theme-text);
+  border-radius: 18px 18px 0 0;
+  box-shadow: 0 -2px 8px #0002;
+  padding: 0.7rem 0.5rem;
+  margin: 0 auto 10px auto;
+  max-width: 420px;
+  text-align: center;
+  font-size: 1em;
+  border: 1.5px solid var(--theme-glass-border);
+  backdrop-filter: blur(12px) saturate(120%);
+}
+
+.footer.footer-wide {
+  width: 100vw;
+  left: 0;
+  right: 0;
+  margin: 0;
+  border-radius: 0;
+  max-width: none;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  box-shadow: 0 -2px 16px #2224;
+  border: none;
+  padding: 0.6em 0 0.5em 0;
+  position: relative;
+  bottom: 0;
+  text-align: center;
+  font-size: 1.05em;
+  backdrop-filter: blur(8px) saturate(120%);
+}
+.footer.footer-wide .footer-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 1em;
+}
+.footer.footer-wide a {
+  color: var(--theme-accent);
+  text-decoration: underline;
+}
+.footer.footer-wide a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* Optional: Remove border from .footer if .footer-wide is present */
+.footer.footer-wide {
+  border: none;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .card, .footer {
+    max-width: 100vw;
+    border-radius: 12px;
+    padding: 1em;
+    font-size: 1em;
+  }
+  .icon {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* Animated Navbar Gradient */
+.animated-navbar {
+  background: linear-gradient(90deg, #667eea, #764ba2, #ffb347, #667eea);
+  background-size: 300% 300%;
+  animation: navbarGradientMove 8s ease-in-out infinite;
+  transition: background 0.5s;
+}
+@keyframes navbarGradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Responsive wide containers for sections */
+.container-fluid {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.2rem;
+  padding-right: 1.2rem;
+}
+
+/* Responsive adjustments for cards and sections */
+@media (max-width: 900px) {
+  .container-fluid {
+    max-width: 98vw;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .card {
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+@media (max-width: 600px) {
+  .container-fluid {
+    max-width: 100vw;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
+  }
+}
+
+/* Navbar link hover effect */
+.animated-navbar .nav-link:hover,
+.animated-navbar .nav-link.active {
+  color: var(--theme-accent) !important;
+  text-shadow: 0 2px 8px #fff4;
+  transition: color 0.2s;
+}
+
+/* Make landing page card wide and responsive */
+@media (min-width: 992px) {
+  #home .card {
+    max-width: 700px;
+    min-width: 420px;
+  }
+}
+@media (max-width: 991px) {
+  #home .card {
+    max-width: 98vw;
+    min-width: 0;
+  }
+}
+@media (max-width: 600px) {
+  #home .card {
+    max-width: 100vw;
+    min-width: 0;
+    padding: 1.2em 0.5em;
+    border-radius: 14px;
+  }
+}
+
+/* Responsive adjustments for home, forecast, map, about, contact cards */
+@media (max-width: 991px) {
+  .container-fluid {
+    max-width: 100vw;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .card {
+    max-width: 100vw;
+    min-width: 0;
+    padding: 1.5em 0.7em;
+    border-radius: 18px;
+  }
+  #map-container {
+    min-width: 160px;
+    height: 260px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .container-fluid {
+    max-width: 100vw;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
+  }
+  .card {
+    max-width: 100vw;
+    min-width: 0;
+    padding: 1.2em 0.4em;
+    border-radius: 14px;
+  }
+  #map-container {
+    min-width: 120px;
+    height: 200px !important;
+  }
+  .forecast-cards-responsive {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.7em !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .container-fluid {
+    max-width: 100vw;
+    padding-left: 0.1rem;
+    padding-right: 0.1rem;
+  }
+  .card, .footer {
+    max-width: 100vw;
+    border-radius: 10px;
+    padding: 1em 0.2em;
+    font-size: 0.98em;
+  }
+  .icon {
+    width: 38px;
+    height: 38px;
+  }
+  #map-container {
+    min-width: 80px;
+    height: 140px !important;
+  }
+  .forecast-cards-responsive > div {
+    min-width: 90vw !important;
+    max-width: 98vw !important;
+    margin: 0 auto !important;
+  }
+}
+
+/* Responsive navbar gap and alignment */
+.nav-responsive-gap {
+  gap: 1.2em;
+}
+@media (max-width: 991px) {
+  .navbar-nav.nav-responsive-gap {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.2em !important;
+    width: 100%;
+    padding-top: 0.7em;
+    padding-bottom: 0.7em;
+  }
+  .navbar-nav .nav-item {
+    width: 100%;
+  }
+  .navbar-nav .nav-link {
+    width: 100%;
+    text-align: left !important;
+    padding-left: 1.2em !important;
+    padding-right: 0.7em !important;
+    font-size: 1.08em;
+  }
+  .navbar-brand {
+    margin-bottom: 0.5em;
+    font-size: 1.15em !important;
+  }
+  .navbar-toggler {
+    margin-left: auto;
+  }
+}
+@media (max-width: 600px) {
+  .navbar-brand {
+    font-size: 1em !important;
+  }
+  .navbar-nav .nav-link {
+    font-size: 1em;
+    padding-left: 1em !important;
+  }
+}
